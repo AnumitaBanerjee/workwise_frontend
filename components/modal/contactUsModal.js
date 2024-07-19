@@ -55,7 +55,11 @@ const ContactUsModal = (props) => {
           <div className="contact-sec-3-form">
             <div className="contact-form">
               <h3 className="tab-title">Contact Us</h3>
-              <ContactUsForm closeModal= {props.closeModal} isModalForm={true} />
+              <ContactUsForm
+                closeModal={props.closeModal}
+                isModalForm={true}
+                fromType={props.fromType}
+              />
             </div>
           </div>
         </div>

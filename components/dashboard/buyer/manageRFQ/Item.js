@@ -3,7 +3,7 @@ import { sendReminder } from "@/services/rfq";
 import moment from "moment";
 import Link from "next/link";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const RFQItem = ({ data }) => {
   const [loading, setloading] = useState(false);
@@ -13,7 +13,10 @@ const RFQItem = ({ data }) => {
     if (data?.products && data?.products?.length > 0) {
       data.products.map((item) => {
         if (item?.product_details && item?.product_details?.length > 0) {
-          productTitles.push(item?.product_details[0].name);
+          let n = item?.product_details[0].name;
+          if (!productTitles.includes(n)) {
+            productTitles.push(n);
+          }
         }
       });
 
@@ -31,7 +34,9 @@ const RFQItem = ({ data }) => {
       .then((res) => {
         setloading(false);
         //alert(res.message)
-        toast.success(res.message)
+        if (res.message && res.message != "") {
+          toast.success(res.message);
+        }
       })
       .catch((err) => {
         setloading(false);
@@ -44,31 +49,50 @@ const RFQItem = ({ data }) => {
         {/* <td>Piping</td> */}
         <td>{list_products()}</td>
         <td>{moment(data.timestamp).format("DD/MM/YYYY")}</td>
-        <td>{moment(data.bid_end_date).format("DD/MM/YYYY")}</td>
+        <td>
+          {data.bid_end_date != ""
+            ? moment(data.bid_end_date).format("DD/MM/YYYY")
+            : "--"}
+        </td>
         <td>{data.status == 1 ? "Open" : "Closed"}</td>
         <td>
           <span>
             <Link
-              href={`rfq-management-details?type=buyer-view&id=${data?.id}`}
+              href={`/dashboard/buyer/rfq-management-details?type=buyer-view&id=${data?.id}`}
               className="page-link"
             >
               View
             </Link>
           </span>
           <span>
-            <Link href="#" onClick={handlereminder} className="page-link-btn">
-              {!loading && "Send Reminder For Quote"}
-              {loading &&<>
-                <span
-                  className="spinner-border spinner-border-sm"
-                  role="status"
-                ></span>{" "}
-                Processing request...
-              </>}
-            </Link>
+            {data.vendors.length > 0 &&
+              data.vendors[0].total_vendors >
+                data.vendors[0].quote_received && (
+                <Link
+                  href="#"
+                  onClick={handlereminder}
+                  className="page-link-btn"
+                >
+                  {!loading &&
+                    `Send Reminder For Quote (${
+                      data.vendors[0].total_vendors -
+                      data.vendors[0].quote_received
+                    }/${data.vendors[0].total_vendors})`}
+                  {loading && (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm"
+                        role="status"
+                      ></span>{" "}
+                      Processing request...
+                    </>
+                  )}
+                </Link>
+              )}
           </span>
         </td>
       </tr>
+      <ToastContainer />
     </>
   );
 };

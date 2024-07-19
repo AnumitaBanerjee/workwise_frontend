@@ -18,6 +18,8 @@ import {
   getTestimonials,
 } from "@/services/cms";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import axios from "axios";
 
 const initialSections = [
   "homepage-section-1",
@@ -36,7 +38,7 @@ const predefinedPageSections = [
   "homepage-company-section",
   "homepage-section-products",
   "Home-section bottom",
-  "banner-contents"
+  "banner-contents",
 ];
 
 export default function Homepage() {
@@ -53,6 +55,37 @@ export default function Homepage() {
   const [modal2IsOpen, setModal2IsOpen] = useState(false);
   const [middleIndex, setmiddleIndex] = useState(0);
   const [playVideo, setPlayVideo] = useState(null);
+  const LINKEDIN_CLIENT_SECRET = "Nj013dgpw51YIi1Z";
+  const LINKEDIN_CLIENT_ID = "77xquc68cjr3s6";
+  const LINKEDIN_CALLBACK_URL = "http://localhost:8111";
+  const router = useRouter();
+  const { code } = router.query;
+
+  useEffect(() => {
+    if (code) {
+      handleLogin(code);
+    }
+  }, [router, code]);
+
+  const handleLogin = async (code) => {
+    axios
+      .get(
+        `http://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&client_id=${LINKEDIN_CLIENT_ID}&client_secret=${LINKEDIN_CLIENT_SECRET}&code=${code}&redirect_uri=${LINKEDIN_CALLBACK_URL}`
+      )
+      .then(async (res) => {
+        console.log(res.data.access_token);
+        let accessToken = res.data.access_token;
+        const userProfile = await fetch(
+          "http://api.linkedin.com/v2/me?projection=(id,firstName,lastName)",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log("userProfile", userProfile);
+      });
+  };
 
   // Set State Change
   const handleChange = (setState) => (event) => {
@@ -339,7 +372,9 @@ export default function Homepage() {
         <title>Workwise | Home</title>
       </Head>
       {/* ----- Banner -------- */}
-      {showBannerLists && <HomeBanner bannerContent={showHomeLists1} content={showBannerLists} />}
+      {showBannerLists && (
+        <HomeBanner bannerContent={showHomeLists1} content={showBannerLists} />
+      )}
 
       {/* --------- Why Choose Us / Process Overview --------- */}
       {showHomeLists1.map((item) => {
@@ -451,9 +486,21 @@ export default function Homepage() {
                           </div>
                           <div className="client-arewa">
                             <div className="client-img">
-                              <Image
+                              {/* <Image
                                 src="/assets/images/client.jpg"
                                 alt="Workwise"
+                                width={72}
+                                height={72}
+                                priority={true}
+                              /> */}
+                              <Image
+                                src={
+                                  item?.created_image_url == "" ||
+                                  item?.created_image_url == null
+                                    ? "/assets/images/products-1.jpg"
+                                    : item?.created_image_url
+                                }
+                                alt={item?.name}
                                 width={72}
                                 height={72}
                                 priority={true}
@@ -461,7 +508,8 @@ export default function Homepage() {
                             </div>
                             <div className="client-con">
                               <p>
-                                Aida Bugg <span>Dat pretium augue</span>
+                                {item?.created_name}{" "}
+                                {/* <span>Dat pretium augue</span> */}
                               </p>
                             </div>
                           </div>
@@ -500,7 +548,9 @@ export default function Homepage() {
                   return (
                     <div className="producs-slider-area" key={item?.name}>
                       {/* <Link href={`product/${item?.slug}`}> */}
-                      <Link href={`/`}>
+                      <Link
+                        href={`/products?s=${item?.name.split(" ").join("+")}`}
+                      >
                         <figure>
                           {" "}
                           <Image
@@ -622,7 +672,7 @@ export default function Homepage() {
                 </div>
               </Modal>
               <figure className="image-area">
-                {video?.thumbnail_url.includes("https://") ? (
+                {video?.thumbnail_url.includes("http://") ? (
                   <Image
                     src={video?.thumbnail_url}
                     alt="Play"
@@ -664,15 +714,17 @@ export default function Homepage() {
                         className="companies-slider-area"
                         key={`companies-${item.id}`}
                       >
-                        <figure>
-                          <Image
-                            src={item.image_url}
-                            alt="Workwise"
-                            width={198}
-                            height={57}
-                            priority={true}
-                          />
-                        </figure>
+                        {item.image_url && (
+                          <figure>
+                            <Image
+                              src={item.image_url}
+                              alt="Workwise"
+                              width={198}
+                              height={57}
+                              priority={true}
+                            />
+                          </figure>
+                        )}
                       </div>
                     );
                   })}
@@ -708,24 +760,24 @@ export default function Homepage() {
                       className="resource-slider-area"
                       key={`blog-${item.id}`}
                     >
-                      <Link href={`blog/${item?.slug}`}>
-                        <figure>
-                          {" "}
-                          <Image
-                            src={item?.image_url}
-                            alt={item?.title}
-                            width={350}
-                            height={363}
-                            priority={true}
-                          />
-                        </figure>
-                        <div className="resource-bottom-area">
-                          <div className="resource-bottom-con">
-                            <span>{item?.blog_category}</span>
-                            <p>{item?.description}</p>
-                          </div>
+                      {/*  <Link href={`blog/${item?.slug}`}>  */}
+                      <figure>
+                        {" "}
+                        <Image
+                          src={item?.image_url}
+                          alt={item?.title}
+                          width={350}
+                          height={363}
+                          priority={true}
+                        />
+                      </figure>
+                      <div className="resource-bottom-area">
+                        <div className="resource-bottom-con">
+                          <span>{item?.blog_category}</span>
+                          <p>{item?.description}</p>
                         </div>
-                      </Link>
+                      </div>
+                      {/* </Link> */}
                     </div>
                   );
                 })}

@@ -6,7 +6,7 @@ import {
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Field, Form, Formik } from "formik";
 import { ToastContainer, toast } from "react-toastify";
 import * as yup from "yup";
@@ -28,17 +28,25 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 const Login = (props) => {
+  const {
+    loginSubmitHandler,
+    loading,
+    setEmail,
+    setPassword,
+    setloading,
+    loginWithGoogle,
+  } = props;
   const swSubscription = useSelector((data) => data.swSubscription);
   const router = useRouter();
   const { code } = router.query;
-  const LINKEDIN_CLIENT_SECRET = 'Nj013dgpw51YIi1Z';
-  const LINKEDIN_CLIENT_ID = '77xquc68cjr3s6';
-  const LINKEDIN_CALLBACK_URL = 'http://localhost:8111';
+  const LINKEDIN_CLIENT_SECRET = "Nj013dgpw51YIi1Z";
+  const LINKEDIN_CLIENT_ID = "77xquc68cjr3s6";
+  const LINKEDIN_CALLBACK_URL = "http://localhost:8111";
   const linkedinOAuthURL = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     LINKEDIN_CALLBACK_URL
   )}&scope=profile`;
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setloading] = useState(false);
+  // const [loading, setloading] = useState(false);
   // Set State Change
   const handleChange = (setState) => (event) => {
     setState(event);
@@ -68,85 +76,114 @@ const Login = (props) => {
       .matches(/[^\w]/, "Password requires a symbol"),
   });
 
-  const loginSubmitHandler = (values) => {
-    setloading(true);
-    LoginService(values)
-      .then((response) => {
-        // subscribe to SW
-        SWSubscribe({subscription:swSubscription, token:response.token}).then(res=>{
-          console.log("PUSH SENT")
-        }).catch(err=>{})
-        setloading(false);
-        toast.success(response.message, {
-          position: "top-center",
-        });
+  // const loginSubmitHandler = (values, isFromOtherModal = false) => {
+  //   setloading(true);
+  //   LoginService(values, isFromOtherModal)
+  //     .then((response) => {
+  //       // subscribe to SW
+  //       SWSubscribe({subscription:swSubscription, token:response.token}).then(res=>{
+  //         console.log("PUSH SENT")
+  //       }).catch(err=>{})
+  //       setloading(false);
+  //       toast.success(response.message, {
+  //         position: "top-center",
+  //       });
 
-        let userType = "";
-        if (response.profile[0].user_type == 2) {
-          userType = "buyer";
-        } else if (response.profile[0].user_type == 3) {
-          userType = "vendor";
-        }else if (response.profile[0].user_type == 4) {
-          userType = "other";
-        }
-        storageInstance.setStorage("current-user-type", userType);
+  //       let userType = "";
+  //       if (response.profile[0].user_type == 2) {
+  //         userType = "buyer";
+  //       } else if (response.profile[0].user_type == 3) {
+  //         userType = "vendor";
+  //       }else if (response.profile[0].user_type == 4) {
+  //         userType = "other";
+  //       }
+  //       storageInstance.setStorage("current-user-type", userType);
 
-        props.closeModal();
-        // router.push(`/dashboard/${userType}`);
-        router.push(`/dashboard`);
-      })
-      .catch((error) => {
-        setloading(false);
+  //       props.closeModal();
+  //       router.push(`/dashboard/${userType}`);
+  //       //router.push(`/dashboard`);
+  //     })
+  //     .catch((error) => {
+  //       setloading(false);
+  //       if(error.message.response.status === 400){
+  //         toast.error(error.message.response.data.message, {
+  //           position: "top-center",
+  //         });
+  //         setTimeout(()=>{
+  //           props.closeModal();
+  //         },2000)
 
-        if (error?.message?.response?.data) {
-          toast.error(error.message.response.data.message, {
-            position: "top-center",
-          });
-        }
+  //         setTimeout(()=>{
+  //           props.handleOtherDeviceLoginModalOpen();
+  //         },1000)
+  //       }
+  //       else if (error?.message?.response?.data) {
+  //         toast.error(error.message.response.data.message, {
+  //           position: "top-center",
+  //         });
+  //       }
 
-        if (error.response?.status === 400) {
-        } else {
-          toast.error(error.message, {
-            position: "top-center",
-          });
-        }
-      });
-  };
+  //       if (error.response?.status === 400) {
+  //       } else {
+  //         toast.error(error.message, {
+  //           position: "top-center",
+  //         });
+  //       }
+  //     });
+  // };
 
-  const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      handleSocialLogin({
-        login_type: "google",
-        access_token: tokenResponse.access_token,
-      })
-        .then((response) => {
-          // subscribe to SW
-          SWSubscribe({subscription:swSubscription, token:response.token}).then(res=>{
-            console.log("PUSH SENT")
-          }).catch(err=>{})
-          setloading(false);
-          toast.success(response.message, {
-            position: "top-center",
-          });
+  // const login = useGoogleLogin({
+  //   onSuccess: (tokenResponse) => {
+  //     handleSocialLogin({
+  //       login_type: "google",
+  //       access_token: tokenResponse.access_token,
+  //     }, false)
+  //       .then((response) => {
+  //         // subscribe to SW
+  //         SWSubscribe({subscription:swSubscription, token:response.token}).then(res=>{
+  //           console.log("PUSH SENT")
+  //         }).catch(err=>{})
+  //         setloading(false);
+  //         toast.success(response.message, {
+  //           position: "top-center",
+  //         });
 
-          let userType = "";
-          if (response.profile.user_type == 2) {
-            userType = "buyer";
-          } else if (response.profile.user_type == 3) {
-            userType = "vendor";
-          }
-          storageInstance.setStorage("current-user-type", userType);
-          props.closeModal();
-          router.push(`/dashboard/${userType}`);
-        })
-        .catch((error) => {
-          setloading(false);
-        });
-    },
-    onError: (error) => {
-      setloading(false);
-    },
-  });
+  //         let userType = "";
+  //         if (response.profile.user_type == 2) {
+  //           userType = "buyer";
+  //         } else if (response.profile.user_type == 3) {
+  //           userType = "vendor";
+  //         }
+  //         storageInstance.setStorage("current-user-type", userType);
+  //         props.closeModal();
+  //         router.push(`/dashboard/${userType}`);
+  //       })
+  //       .catch((error) => {
+  //         setloading(false);
+  //         console.log(error?.message?.response,"response *")
+  //         if (error.message.response.status === 400 && error?.message?.response?.data?.status === 4) {
+  //           toast.error(error.message.response.data.message, {
+  //             position: "top-center",
+  //           });
+  //           // setTimeout(() => {
+  //           //   props.closeModal();
+  //           // }, 2000)
+
+  //           // setTimeout(() => {
+  //           //   props.handleOtherDeviceLoginModalOpen();
+  //           // }, 1000)
+  //         }
+  //         else if (error?.message?.response?.data) {
+  //           toast.error(error.message.response.data.message, {
+  //             position: "top-center",
+  //           });
+  //         }
+  //       });
+  //   },
+  //   onError: (error) => {
+  //     setloading(false);
+  //   },
+  // });
 
   // const { linkedInLogin } = useLinkedIn({
   //   clientId: '77xquc68cjr3s6',
@@ -161,34 +198,33 @@ const Login = (props) => {
   // });
 
   const handleLinkdedinLogin = () => {
-    window.location.href = linkedinOAuthURL
-  }
-
-
+    window.location.href = linkedinOAuthURL;
+  };
 
   useEffect(() => {
     if (code) {
-      handleLogin(code);
-    };
-  }, [code]);
+      // handleLogin(code);
+    }
+  }, [router, code]);
 
   const handleLogin = async (code) => {
-
-    axios.get(`http://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&client_id=${LINKEDIN_CLIENT_ID}&client_secret=${LINKEDIN_CLIENT_SECRET}&code=${code}&redirect_uri=${LINKEDIN_CALLBACK_URL}`)
+    axios
+      .get(
+        `http://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&client_id=${LINKEDIN_CLIENT_ID}&client_secret=${LINKEDIN_CLIENT_SECRET}&code=${code}&redirect_uri=${LINKEDIN_CALLBACK_URL}`
+      )
       .then(async (res) => {
-        console.log(res.data.access_token)
+        console.log(res.data.access_token);
         let accessToken = res.data.access_token;
         const userProfile = await fetch(
-          'http://api.linkedin.com/v2/me?projection=(id,firstName,lastName)',
+          "http://api.linkedin.com/v2/me?projection=(id,firstName,lastName)",
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`
-            }
+              Authorization: `Bearer ${accessToken}`,
+            },
           }
         );
-        console.log("userProfile", userProfile)
-      })
-
+        console.log("userProfile", userProfile);
+      });
   };
 
   return (
@@ -199,7 +235,11 @@ const Login = (props) => {
         <Formik
           initialValues={initialValues}
           validationSchema={validateSchema}
-          onSubmit={(values) => loginSubmitHandler(values)}
+          onSubmit={(values) => {
+            setEmail(values.email);
+            setPassword(values.password);
+            loginSubmitHandler(values);
+          }}
         >
           {({ errors, touched }) => (
             <Form>
@@ -212,7 +252,7 @@ const Login = (props) => {
                   type="email"
                   id="email"
                   name="email"
-                  placeholder="Enter email here"
+                  placeholder="@example.com"
                 />
                 {touched.email && errors.email && (
                   <div className="form-error">{errors.email}</div>
@@ -228,7 +268,7 @@ const Login = (props) => {
                     type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
-                    placeholder="Enter password here"
+                    placeholder="********"
                   />
                   <div
                     className="eye-icon"
@@ -277,12 +317,16 @@ const Login = (props) => {
               className="btn-google"
               onClick={() => {
                 setloading(true);
-                login();
+                loginWithGoogle();
               }}
             >
               <FontAwesomeIcon icon={faGoogle} /> Login with Google
             </button>
-            <button type="button" onClick={handleLinkdedinLogin} className="btn-facebook">
+            <button
+              type="button"
+              onClick={handleLinkdedinLogin}
+              className="btn-facebook"
+            >
               <FontAwesomeIcon icon={faLinkedin} /> Login with Linkedin
             </button>
             <p>

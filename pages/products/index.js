@@ -6,10 +6,10 @@ import Head from "next/head";
 const Products = () => {
   return (
     <>
-    <Head>
-      <title>Search Page | Work Wise</title>
-    </Head>
-      <SearchPage title="Products" type="products" />
+      <Head>
+        <title>Workwise | Search Page</title>
+      </Head>
+      <SearchPage title="Search vendors" type="products" />
     </>
   );
 };

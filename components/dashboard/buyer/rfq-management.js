@@ -58,7 +58,7 @@ const RfqManagement = () => {
                   }`}
                   onClick={() => handleTabChange("manageRFQs")}
                 >
-                  Manage RFQs
+                  Manage Group RFQ
                 </button>
                 <button
                   className={`tab ${

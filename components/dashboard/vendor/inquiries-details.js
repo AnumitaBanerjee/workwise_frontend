@@ -35,7 +35,7 @@ const RfqManagementPreview = () => {
       .then((res) => {
         setloading(false);
         setrfqDetails(res.data);
-        checkIfQuotationSendIsPossible(res.data)
+        checkIfQuotationSendIsPossible(res.data);
       })
       .catch((error) => {
         setloading(false);
@@ -43,6 +43,9 @@ const RfqManagementPreview = () => {
   };
 
   const isSubmitAble = () => {
+    if (rfqDetails.bid_end_date == "") {
+      return true;
+    }
     let CURRENT_DATE = moment(new Date());
     let END_DATE = moment(rfqDetails.bid_end_date);
     return END_DATE.diff(CURRENT_DATE, "days") >= 0;
@@ -62,16 +65,14 @@ const RfqManagementPreview = () => {
 
   const checkIfQuotationSendIsPossible = (rfqd) => {
     var finalizedProducts = [];
-    rfqd?.finalizations?.map(item => finalizedProducts.push(item.product_id));
+    rfqd?.finalizations?.map((item) => finalizedProducts.push(item.product_id));
 
     if (finalizedProducts.length === rfqd?.products.length) {
-      setproductleftforbid(false)
+      setproductleftforbid(false);
     } else {
-      setproductleftforbid(true)
+      setproductleftforbid(true);
     }
-
-
-  }
+  };
 
   return (
     <>
@@ -113,7 +114,7 @@ const RfqManagementPreview = () => {
                             <tr>
                               <th>Name of product</th>
                               <th>Size specifications & Quantity</th>
-                              <th>Datasheet</th>
+                              <th>TDS</th>
                               <th>QAP</th>
                               <th>Comments</th>
                               <th>Selected vendors</th>
@@ -347,7 +348,7 @@ const RfqManagementPreview = () => {
         </>
       )}
       {/* // Not loading contents */}
-      {!loading && rfqDetails && (
+      {!loading && rfqDetails && rfqDetails.id && (
         <>
           <section className="buyer-common-header sc-pt-80">
             <div className="container-fluid">
@@ -396,37 +397,47 @@ const RfqManagementPreview = () => {
                             <tr>
                               <th>Name of product</th>
                               <th>Size specifications & Quantity</th>
-                              <th>Datasheet</th>
+                              <th>TDS</th>
                               <th>QAP</th>
                               <th>Comments</th>
                               {/* <th>Selected vendors</th> */}
                             </tr>
                           </thead>
                           <tbody>
-                            {rfqDetails.products.map((item) => {
+                            {rfqDetails?.products?.map((item, index) => {
+                              let si = 0;
+                              let sp = si + 1;
+                              let qu = sp + 1;
+                              console.log(
+                                `item ${index} - size - ${si}, spec ${sp}, quantity ${qu}`
+                              );
                               return (
                                 <tr key={`${item.product_id}`}>
                                   <td>{item?.product_details[0]?.name}</td>
                                   <td>
                                     <div className="size-specification vendor-view-rfq">
-                                      {item?.product_specs.map((spec_item, index) => {
-                                        return (
-                                          <input
-                                            key={`rfq_d_spec_itm_${index}`}
-                                            className="full"
-                                            type="text"
-                                            name={spec_item?.title.toLowerCase()}
-                                            id={
-                                              item?.product_id +
-                                              "_" +
-                                              spec_item?.title.toLowerCase()
-                                            }
-                                            placeholder="Size"
-                                            value={spec_item?.value}
-                                            disabled
-                                          />
-                                        );
-                                      })}
+                                      {item?.product_specs.map(
+                                        (spec_item, index) => {
+                                          if (index >= si && index <= qu) {
+                                            return (
+                                              <input
+                                                key={`rfq_d_spec_itm_${index}`}
+                                                className="full"
+                                                type="text"
+                                                name={spec_item?.title.toLowerCase()}
+                                                id={
+                                                  item?.product_id +
+                                                  "_" +
+                                                  spec_item?.title.toLowerCase()
+                                                }
+                                                placeholder="Size"
+                                                value={spec_item?.value}
+                                                disabled
+                                              />
+                                            );
+                                          }
+                                        }
+                                      )}
 
                                       {item?.spec_file &&
                                         item?.spec_file != "" && (
@@ -442,7 +453,47 @@ const RfqManagementPreview = () => {
 
                                   <td>
                                     <div>
+                                      {item?.datasheet == null &&
+                                        item?.product_details[0]
+                                          ?.predefined_tds_file != null &&
+                                        item.datasheet_file == "" && (
+                                          <>
+                                            <Link
+                                              target="_blank"
+                                              href={
+                                                item?.product_details[0]
+                                                  ?.predefined_tds_file
+                                              }
+                                            >
+                                              <FontAwesomeIcon icon={faEye} />{" "}
+                                              View File
+                                            </Link>
+                                            <Link
+                                              target="_blank"
+                                              download={true}
+                                              href={
+                                                item?.product_details[0]
+                                                  ?.predefined_tds_file
+                                              }
+                                            >
+                                              <Image
+                                                src="/assets/images/download-icon.png"
+                                                alt="Workwise"
+                                                width={16}
+                                                height={16}
+                                                priority={true}
+                                              />{" "}
+                                              Download
+                                            </Link>
+                                          </>
+                                        )}
+                                      {item?.datasheet == null &&
+                                        item?.product_details[0]
+                                          ?.predefined_tds_file == null &&
+                                        item.datasheet_file == "" &&
+                                        "N/A"}
                                       {item?.datasheet &&
+                                        item?.datasheet != null &&
                                         item?.datasheet.length > 0 && (
                                           <span>{item?.datasheet[0].name}</span>
                                         )}
@@ -451,6 +502,18 @@ const RfqManagementPreview = () => {
                                           <Link
                                             target="_blank"
                                             href={item?.datasheet_file}
+                                          >
+                                            <FontAwesomeIcon icon={faEye} />
+                                          </Link>
+                                        )}
+                                      {!item?.datasheet_file &&
+                                        item?.datasheet != null &&
+                                        item?.datasheet_file == "" && (
+                                          <Link
+                                            target="_blank"
+                                            href={
+                                              item?.datasheet[0]?.datasheet_link
+                                            }
                                           >
                                             <FontAwesomeIcon icon={faEye} />
                                           </Link>
@@ -471,36 +534,125 @@ const RfqManagementPreview = () => {
                                             />
                                           </Link>
                                         )}
+                                      {!item?.datasheet_file &&
+                                        item?.datasheet != null &&
+                                        item?.datasheet_file == "" && (
+                                          <Link
+                                            target="_blank"
+                                            download={true}
+                                            href={
+                                              item?.datasheet[0].datasheet_link
+                                            }
+                                          >
+                                            <Image
+                                              src="/assets/images/download-icon.png"
+                                              alt="Workwise"
+                                              width={16}
+                                              height={16}
+                                              priority={true}
+                                            />
+                                          </Link>
+                                        )}
                                     </div>
                                   </td>
                                   <td>
                                     <div>
-                                      {item?.qap && item?.qap != "" && (
-                                        <span>{item?.qap[0].name}</span>
-                                      )}
-                                      {item?.qap_file && item?.qap_file != "" && (
-                                        <Link
-                                          target="_blank"
-                                          href={item?.qap_file}
-                                        >
-                                          <FontAwesomeIcon icon={faEye} />
-                                        </Link>
-                                      )}
-                                      {item?.qap_file && item?.qap_file != "" && (
-                                        <Link
-                                          target="_blank"
-                                          download={true}
-                                          href={item?.qap_file}
-                                        >
-                                          <Image
-                                            src="/assets/images/download-icon.png"
-                                            alt="Workwise"
-                                            width={16}
-                                            height={16}
-                                            priority={true}
-                                          />
-                                        </Link>
-                                      )}
+                                      {item?.qap == null &&
+                                        item?.product_details[0]
+                                          ?.predefined_qap_file != null &&
+                                        item.qap_file == "" && (
+                                          <>
+                                            <Link
+                                              target="_blank"
+                                              href={
+                                                item?.product_details[0]
+                                                  ?.predefined_qap_file
+                                              }
+                                            >
+                                              <FontAwesomeIcon icon={faEye} />{" "}
+                                              View File
+                                            </Link>
+                                            <Link
+                                              target="_blank"
+                                              download={true}
+                                              href={
+                                                item?.product_details[0]
+                                                  ?.predefined_qap_file
+                                              }
+                                            >
+                                              <Image
+                                                src="/assets/images/download-icon.png"
+                                                alt="Workwise"
+                                                width={16}
+                                                height={16}
+                                                priority={true}
+                                              />{" "}
+                                              Download
+                                            </Link>
+                                          </>
+                                        )}
+                                      {item?.qap == null &&
+                                        item?.product_details[0]
+                                          ?.predefined_qap_file == null &&
+                                        item.qap_file == "" &&
+                                        "N/A"}
+                                      {item?.qap &&
+                                        item?.qap != "" &&
+                                        item?.qap != null && (
+                                          <span>{item?.qap[0].name}</span>
+                                        )}
+                                      {item?.qap_file &&
+                                        item?.qap_file != "" && (
+                                          <Link
+                                            target="_blank"
+                                            href={item?.qap_file}
+                                          >
+                                            <FontAwesomeIcon icon={faEye} />
+                                          </Link>
+                                        )}
+                                      {!item?.qap_file &&
+                                        item?.qap_file == "" &&
+                                        item?.qap != null && (
+                                          <Link
+                                            target="_blank"
+                                            href={item?.qap[0].qap_link}
+                                          >
+                                            <FontAwesomeIcon icon={faEye} />
+                                          </Link>
+                                        )}
+                                      {item?.qap_file &&
+                                        item?.qap_file != "" && (
+                                          <Link
+                                            target="_blank"
+                                            download={true}
+                                            href={item?.qap_file}
+                                          >
+                                            <Image
+                                              src="/assets/images/download-icon.png"
+                                              alt="Workwise"
+                                              width={16}
+                                              height={16}
+                                              priority={true}
+                                            />
+                                          </Link>
+                                        )}
+                                      {!item?.qap_file &&
+                                        item?.qap_file == "" &&
+                                        item?.qap != null && (
+                                          <Link
+                                            target="_blank"
+                                            download={true}
+                                            href={item?.qap[0].qap_link}
+                                          >
+                                            <Image
+                                              src="/assets/images/download-icon.png"
+                                              alt="Workwise"
+                                              width={16}
+                                              height={16}
+                                              priority={true}
+                                            />
+                                          </Link>
+                                        )}
                                     </div>
                                   </td>
                                   <td>
@@ -616,24 +768,33 @@ const RfqManagementPreview = () => {
                             </div>
                           </div>
 
-                          {rfqDetails?.terms &&
-                            rfqDetails?.terms.length > 0 && (
-                              <div className="col-md-12">
-                                <div className="row terms-conditions">
-                                  <div className="col-md-6">
-                                    <h4>Terms & Conditions</h4>
+                          {rfqDetails && rfqDetails?.id && (
+                            <div className="col-md-12">
+                              <div className="row terms-conditions">
+                                <div className="col-md-6 ">
+                                  <h4>Terms & Conditions</h4>
+                                  {rfqDetails?.terms.length == 0 && (
+                                    <p>No predefined terms selected!</p>
+                                  )}
 
+                                  {rfqDetails?.terms.length > 0 && (
                                     <ol>
                                       {rfqDetails?.terms.map((item, index) => {
-                                        return <li key={`rfq_d_t_${index}`}>{item.content[0].title}</li>;
+                                        return (
+                                          <li key={`rfq_d_t_${index}`}>
+                                            {item.content[0].title}
+                                          </li>
+                                        );
                                       })}
                                     </ol>
-                                  </div>
-                                  <div className="col-md-6">
-                                    {/* winning bid area */}
-                                    {rfqDetails.finalizations && rfqDetails.finalizations.length > 0 && (
+                                  )}
+                                </div>
+                                <div className="col-md-6">
+                                  {/* winning bid area */}
+                                  {rfqDetails.finalizations &&
+                                    rfqDetails.finalizations.length > 0 && (
                                       <div className="finalized-details">
-                                        <h4>Finalized Details</h4>
+                                        {/* <h4>Finalized Details</h4>
                                         <div className="noborder-table">
                                           <div className="table-responsive">
                                             <table>
@@ -655,23 +816,27 @@ const RfqManagementPreview = () => {
                                               </tbody>
                                             </table>
                                           </div>
-                                        </div>
+                                        </div> */}
                                       </div>
                                     )}
-                                    {/* winning bid area end */}
-                                    {rfqDetails.quotations.length > 0 && (
+                                  {/* winning bid area end */}
+                                  {rfqDetails.quotations.length > 0 &&
+                                    rfqDetails.quotations[0].is_regret == 0 && (
                                       <div className="submitted-quotation">
                                         <h4>
                                           You've aready submitted a quotation on{" "}
                                           {moment(
                                             new Date(
                                               parseInt(
-                                                rfqDetails.quotations[0].timestamp
+                                                rfqDetails.quotations[0]
+                                                  .timestamp
                                               )
                                             )
-                                          ).format("DD/MM/YYYY - HH:mm:ss A")}{" "}
+                                          ).format(
+                                            "DD/MM/YYYY - HH:mm:ss A"
+                                          )}{" "}
                                         </h4>
-                                        <div className="noborder-table">
+                                        {/* <div className="noborder-table">
                                           <div className="table-responsive">
                                             <table>
                                               <thead>
@@ -692,12 +857,12 @@ const RfqManagementPreview = () => {
                                                 </tr>
                                                 <tr>
                                                   <th>Unit Price</th>
-                                                  <th>Package Price</th>
-                                                  <th>Tax</th>
-                                                  <th>Freight Price</th>
+                                                  <th>Packaging (%)</th>                                                  
+                                                  <th>Freight (%)</th>
+                                                  <th>Tax (%)</th>
                                                   <th>Total Price</th>
                                                   <th>Comment</th>
-                                                  <th>Delivery Period</th>
+                                                  <th>Delivery (Weeks)</th>
                                                 </tr>
                                               </thead>
                                               <tbody>
@@ -719,21 +884,22 @@ const RfqManagementPreview = () => {
                                                               : "-"}
                                                           </td>
                                                           <td>
-                                                            ₹{" "}
+                                                            {" "}
                                                             {item?.package_price
-                                                              ? item?.package_price
+                                                              ? item?.package_price+"%"
+                                                              : "-"}
+                                                          </td>
+                                                          
+                                                          <td>
+                                                            {" "}
+                                                            {item?.freight_price
+                                                              ? item?.freight_price+"%"
                                                               : "-"}
                                                           </td>
                                                           <td style={{ width: 60 }}>
-                                                            ₹{" "}
+                                                            {" "}
                                                             {item?.tax
-                                                              ? item?.tax
-                                                              : "-"}
-                                                          </td>
-                                                          <td>
-                                                            ₹{" "}
-                                                            {item?.freight_price
-                                                              ? item?.freight_price
+                                                              ? item?.tax+"%"
                                                               : "-"}
                                                           </td>
                                                           <td>
@@ -759,13 +925,35 @@ const RfqManagementPreview = () => {
                                               </tbody>
                                             </table>
                                           </div>
-                                        </div>
+                                        </div> */}
                                       </div>
                                     )}
-                                  </div>
+                                  {rfqDetails.quotations.length > 0 &&
+                                    rfqDetails.quotations[0].is_regret == 1 && (
+                                      <div className="submitted-quotation">
+                                        <h4 className="text-center">
+                                          You've{" "}
+                                          <span style={{ color: "#f00" }}>
+                                            declined
+                                          </span>{" "}
+                                          the RFQ request on{" "}
+                                          {moment(
+                                            new Date(
+                                              parseInt(
+                                                rfqDetails.quotations[0]
+                                                  .timestamp
+                                              )
+                                            )
+                                          ).format(
+                                            "DD/MM/YYYY - HH:mm:ss A"
+                                          )}{" "}
+                                        </h4>
+                                      </div>
+                                    )}
                                 </div>
                               </div>
-                            )}
+                            </div>
+                          )}
                           <div className="col-md-12">
                             <div className="row">
                               <div className="col-md-6">
@@ -786,29 +974,36 @@ const RfqManagementPreview = () => {
                           </div>
                           {enableBuyerView && (
                             <>
-                              {rfqDetails?.status == 1 && <button
-                                type="button"
-                                className="btn btn-secondary"
-                                onClick={handleRFqClose}
-                                disabled={closeRFqLoading}
-                              >
-                                {closeRFqLoading ? 'Processing request...' : 'Mark RFQ as Closed'}
-                              </button>}
-                              {rfqDetails?.status == 2 && <button
-                                type="button"
-                                className="btn btn-secondary"
-                                onClick={(e) => e.preventDefault()}
-                                disabled={true}
-                              >
-                                RFQ has been closed
-                              </button>}
+                              {rfqDetails?.status == 1 && (
+                                <button
+                                  type="button"
+                                  className="btn btn-secondary"
+                                  onClick={handleRFqClose}
+                                  disabled={closeRFqLoading}
+                                >
+                                  {closeRFqLoading
+                                    ? "Processing request..."
+                                    : "Mark RFQ as Closed"}
+                                </button>
+                              )}
+                              {rfqDetails?.status == 2 && (
+                                <button
+                                  type="button"
+                                  className="btn btn-secondary"
+                                  onClick={(e) => e.preventDefault()}
+                                  disabled={true}
+                                >
+                                  RFQ has been closed
+                                </button>
+                              )}
                             </>
                           )}
                           {!enableBuyerView && (
                             <>
-
-                              {isSubmitAble() && productleftforbid &&
-                                rfqDetails.quotations.length <= 0 && rfqDetails?.status == 1 && (
+                              {isSubmitAble() &&
+                                productleftforbid &&
+                                rfqDetails.quotations.length <= 0 &&
+                                rfqDetails?.status == 1 && (
                                   <Link
                                     href={`/dashboard/vendor/send-quote?id=${id}`}
                                   >
@@ -831,6 +1026,13 @@ const RfqManagementPreview = () => {
             </div>
           </section>
         </>
+      )}
+      {!loading && rfqDetails && !rfqDetails.id && (
+        <section className="buyer-common-header sc-pt-80">
+          <div className="container-fluid">
+            {<h1 className="heading">RFQ Not Available!</h1>}
+          </div>
+        </section>
       )}
     </>
   );

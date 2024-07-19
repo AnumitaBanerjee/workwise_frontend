@@ -68,6 +68,12 @@ const AuthModal = (props) => {
 					<Login
 						setActiveTab={props.setActiveTab}
 						closeModal={props.closeModal}
+						setEmail={props.setEmail}
+        				setPassword={props.setPassword}
+						loading={props.loading}
+						setloading={props.setloading}
+						loginSubmitHandler={props.loginSubmitHandler}
+						loginWithGoogle={props.loginWithGoogle}
 					/>
 				) : (
 					<Register closeModal={props.closeModal} />

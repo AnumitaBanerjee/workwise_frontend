@@ -572,6 +572,7 @@
             width: 100%;
         }
     }
+   
 }
 @media screen and (max-width: 767px) {
     body {
@@ -1195,6 +1196,20 @@
             padding: 20px;
             .vendor-mngt-con{
                 padding: 20px 0 10px 0;
+            }
+        }
+    }
+     /* Subscription Page*/
+     .subscription-sec-row {
+        .subscription-sec-main{
+            padding-bottom: 30px;
+            height: auto;
+            .btn-holder{
+                padding-top: 20px;
+                position: static;
+                left: inherit;
+                bottom: inherit;
+                transform: translateX(0);
             }
         }
     }

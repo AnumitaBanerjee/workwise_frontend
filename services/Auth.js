@@ -2,10 +2,10 @@ import axiosInstance from "@/lib/axios";
 import axiosFormData from "@/lib/axiosFormData";
 import storageInstance from "@/utils/storageInstance";
 
-export const LoginService = (values) => {
+export const LoginService = (values, confirm) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			let response = await axiosInstance.post(`/users/login`, values);
+			let response = await axiosInstance.post(`/users/login?conform=${confirm}`, values);
 			storageInstance.setStorage("token", response.token);
 			resolve(response);
 		} catch (error) {
@@ -122,11 +122,11 @@ export const handleChangeProfilePicture = (file) => {
 	});
 };
 
-export const handleSocialLogin = (payload) => {
+export const handleSocialLogin = (payload, confirm) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let response = await axiosInstance.post(
-				`${process.env.NEXT_PUBLIC_API_URL}/users/social-login`,
+				`${process.env.NEXT_PUBLIC_API_URL}/users/social-login?conform=${confirm}`,
 				payload
 			);
 			storageInstance.setStorage("token", response.token);
@@ -225,6 +225,18 @@ export const setCommunicaitonSettings = (payload) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let response = await axiosInstance.post(`/users/communication-settings`,payload);
+			resolve(response);
+		} catch (error) {
+			reject({ message: error });
+		}
+	});
+};
+
+
+export const getDashboardData = (payload) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let response = await axiosInstance.get(`/users/get-dashboard-data`);
 			resolve(response);
 		} catch (error) {
 			reject({ message: error });

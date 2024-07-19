@@ -4,6 +4,7 @@ import BuyerPage from "@/components/dashboard/buyer";
 const Buyer = () => {
     return (
         <>
+            
             <BuyerPage />
         </>
     )

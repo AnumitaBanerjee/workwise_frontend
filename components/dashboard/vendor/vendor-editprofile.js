@@ -23,6 +23,7 @@ import {
 import FullLoader from "@/components/shared/FullLoader";
 import { toast } from "react-toastify";
 import { getProfile, getUserDetails } from "@/services/Auth";
+import Head from "next/head";
 const VendorProfile = () => {
   const router = useRouter();
   const { id, origin, vendors } = router.query;
@@ -34,8 +35,9 @@ const VendorProfile = () => {
   const [pastRFQs, setpastRFQs] = useState([]);
   const [reviewText, setreviewText] = useState("");
   const [rating, setrating] = useState(0);
-  const [canSubReviewUser, setcanSubReviewUser] = useState(false);
+  const [canSubReviewUser, setcanSubReviewUser] = useState(true);
   const [avgRating, setavgRating] = useState(0);
+  const [currentUserProfile, setcurrentUserProfile] = useState(null);
 
   useEffect(() => {
     setshowbackBtn(false);
@@ -97,6 +99,7 @@ const VendorProfile = () => {
     })
       .then((res) => {
         setreviewLoading(false);
+        getVendorProfile();
         toast.success(res.message);
       })
       .catch((err) => {
@@ -106,6 +109,7 @@ const VendorProfile = () => {
 
   const canSubmitReview = async () => {
     const rsp = await getProfile();
+    setcurrentUserProfile(rsp.data);
     if (vendorDetails) {
       let isP = vendorDetails.reviews.filter(
         (item) => item.reviewed_by == rsp.data.id
@@ -114,7 +118,7 @@ const VendorProfile = () => {
       if (isP.length > 0) {
         setcanSubReviewUser(false);
       } else {
-        setcanSubReviewUser(true);
+        setcanSubReviewUser(false);
       }
     }
   };
@@ -132,6 +136,10 @@ const VendorProfile = () => {
 
   return (
     <>
+      <Head>
+        <title>Vendor Profile | Workwise</title>
+      </Head>
+
       <section className="vendor-common-header sc-pt-80">
         <div className="container-fluid">
           <h1 className="heading">Vendor’s profile</h1>
@@ -275,32 +283,47 @@ const VendorProfile = () => {
                       value={avgRating}
                     />
                     <p>
-                      {avgRating} / 5 based on {vendorDetails?.reviews.length}{" "}
-                      reviews
+                      {avgRating.toFixed(1)} / 5 based on{" "}
+                      {vendorDetails?.reviews.length} reviews
                     </p>
-                    <ul>
+                    <ul className="reviewList">
                       {vendorDetails?.reviews.map((review, index) => {
-                        return (
-                          <li key={index}>
-                            <p>
-                              <strong>{review.buyer}</strong>
-                            </p>
-                            <small>
-                              {review.rating}/5
-                              <StarRating
-                                totalStars={5}
-                                onRatingChange={null}
-                                value={review.rating}
-                              />
-                            </small>
-                            <p>{review.description}</p>
-                          </li>
-                        );
+                        if (
+                          currentUserProfile &&
+                          currentUserProfile.id == review.reviewed_by
+                        ) {
+                          return (
+                            <li key={index}>
+                              <div className="imagearea">
+                                <img
+                                  src={currentUserProfile?.profile_image}
+                                  alt={currentUserProfile?.company_name}
+                                />
+                              </div>
+                              <div className="reviewarea">
+                                <div className="ratingArea">
+                                  <p>
+                                    <strong>{review.buyer}</strong>
+                                  </p>
+                                  <small>
+                                    {review.rating}/5
+                                    <StarRating
+                                      totalStars={5}
+                                      onRatingChange={null}
+                                      value={review.rating}
+                                    />
+                                  </small>
+                                </div>
+                                <p>{review.description}</p>
+                              </div>
+                            </li>
+                          );
+                        }
                       })}
                     </ul>
                   </>
                 )}
-                {canSubReviewUser && (
+                {1 == 1 && (
                   <>
                     <div>
                       <StarRating
@@ -318,7 +341,7 @@ const VendorProfile = () => {
                       placeholder="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy lorem text."
                     ></textarea>
                     <div>
-                      {reviewText.length > 20 && (
+                      {
                         <Link
                           href=""
                           onClick={submitReview}
@@ -326,7 +349,7 @@ const VendorProfile = () => {
                         >
                           Submit Now
                         </Link>
-                      )}
+                      }
                     </div>
                   </>
                 )}
@@ -467,7 +490,7 @@ const VendorProfile = () => {
                               className="col-md-4 gallery-con"
                             >
                               {item?.product_image_url && (
-                                <Image
+                                <img
                                   src={item?.product_image_url}
                                   alt={item?.product_image}
                                   width={255}

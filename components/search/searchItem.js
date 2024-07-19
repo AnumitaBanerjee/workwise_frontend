@@ -14,7 +14,7 @@ const SearchItem = ({
   setbulkRFQProducts,
   selectedProduct = false,
   currentSelectedProduct = {},
-  handleRemoveCurrentSelected
+  handleRemoveCurrentSelected,
 }) => {
   const dispatch = useDispatch();
 
@@ -49,15 +49,13 @@ const SearchItem = ({
   };
 
   const handleBulkRFQ = (e, item) => {
-    console.log(bulkRFQProducts,item)
+    console.log(bulkRFQProducts, item);
     if (e.target.checked) {
-      item.selected = true
+      item.selected = true;
       setbulkRFQProducts((oldArray) => [...oldArray, item]);
     } else {
-      item.selected = false
-      let p = bulkRFQProducts.filter(
-        (product) => product.id != item.id
-      );
+      item.selected = false;
+      let p = bulkRFQProducts.filter((product) => product.id != item.id);
       setbulkRFQProducts(p);
     }
   };
@@ -77,16 +75,43 @@ const SearchItem = ({
               {type == "products" && (
                 <span>By {data?.user_detail[0]?.name}</span>
               )}
-              {type == "vendors" && <span>By {data?.company_name ? data?.company_name : data?.vendor_name}</span>}
+              {type == "vendors" && (
+                <span>
+                  By{" "}
+                  {data?.company_name ? data?.company_name : data?.vendor_name}
+                </span>
+              )}
             </label>
           )}
         </div>
         <div className="mdl-con-btm">
-        {selectedProduct && <button onClick={()=>handleRemoveCurrentSelected()}className="removeSelectedProduct"><FontAwesomeIcon icon={faTimes} /> </button> }
+          {data.id == "**" && !data.sp && (
+            <div className="list_item_disabled">
+              <span>You need to purchase subscription to view this vendor</span>
+            </div>
+          )}
+          {selectedProduct && (
+            <button
+              onClick={() => handleRemoveCurrentSelected()}
+              className="removeSelectedProduct"
+            >
+              <FontAwesomeIcon icon={faTimes} />{" "}
+            </button>
+          )}
           <div className="row">
             <div className="col-md-3">
               <div className="vendor-img">
-                {type == "products" && (
+                {type == "products" && data.image_url ? (
+                  <>
+                    <img
+                      src={data.image_url}
+                      alt="Workwise"
+                      width={98}
+                      height={98}
+                      priority={true}
+                    />
+                  </>
+                ) : (
                   <>
                     <Image
                       src="/assets/images/client3.png"
@@ -111,12 +136,17 @@ const SearchItem = ({
                       height={98}
                     />
 
-                    {data.address &&<p>                      
-                      <FontAwesomeIcon icon={faLocationDot} /> {data.address}
-                    </p>}
+                    {data.address && (
+                      <p>
+                        <FontAwesomeIcon icon={faLocationDot} /> {data.address}
+                      </p>
+                    )}
                     <p>
-                      <Link target="_blank"
-                  href={`/dashboard/buyer/rfq-management-vendor/vendor-profile?id=${data.id}`} className="btn btn-primary">
+                      <Link
+                        target="_blank"
+                        href={`/dashboard/buyer/rfq-management-vendor/vendor-profile?id=${data.id}`}
+                        className="btn btn-primary"
+                      >
                         Show Contact Info
                       </Link>
                     </p>
@@ -139,7 +169,7 @@ const SearchItem = ({
                         <b>Website :</b> {data.website}
                       </p>
                     )}
-                    {data.vendor_approved &&
+                    {/*  {data.vendor_approved &&
                       data.vendor_approved.length > 0 && (
                         <p>
                           <b>Approved By :</b>{" "}
@@ -147,7 +177,7 @@ const SearchItem = ({
                             .map((approved) => approved.vendor_approve)
                             .join(", ")}
                         </p>
-                      )}
+                      )} */}
                   </div>
                 </>
               )}
@@ -176,7 +206,7 @@ const SearchItem = ({
                           <b>Website :</b> www.lorem.com
                         </p>
                         <p>
-                          <b>Approved By :</b> EIL, GAIL, SAIL, IOCL
+                          {/* <b>Approved By :</b> EIL, GAIL, SAIL, IOCL */}
                         </p>
                       </>
                     )}
@@ -195,7 +225,9 @@ const SearchItem = ({
                 </Link>
                 <Link
                   href="#"
-                  className="btn btn-primary custom_primary_btn has_primary-bg"
+                  className={`btn btn-primary custom_primary_btn has_primary-bg ${
+                    !data.sp ? `disabled` : ``
+                  }`}
                   onClick={(e) => {
                     e.preventDefault();
                     addToRFQ(data);
@@ -206,20 +238,22 @@ const SearchItem = ({
 
                 {type != "products" && (
                   <>
-                    {data?.ptr_file &&<Link
-                      href={data?.ptr_file ? data?.ptr_file : ""}
-                      className="btn btn-primary custom_primary_btn"
-                      disabled={!data?.ptr_file}
-                    >
-                      View PTR
-                    </Link>}
-                    <Link
+                    {data?.ptr_file && (
+                      <Link
+                        href={data?.ptr_file ? data?.ptr_file : ""}
+                        className="btn btn-primary custom_primary_btn"
+                        disabled={!data?.ptr_file}
+                      >
+                        View PTR
+                      </Link>
+                    )}
+                    {/* <Link
                     target="_blank"
                       href="/contactus"
                       className="btn btn-primary custom_primary_btn"
                     >
                       Send Enquiry
-                    </Link>
+                    </Link> */}
                   </>
                 )}
               </div>

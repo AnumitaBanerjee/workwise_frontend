@@ -50,7 +50,7 @@ const Register = (props) => {
         "please enter valid mobile number"
       )
       .min(10, "Min 10 digit is required")
-      .max(10, "Mobile number not more than 10 digit long")
+      .max(11, "Mobile number not more than 11 digit long")
       .required("Mobile number is required"),
     organization_name: yup.string().required("Organization name is required"),
     register_as: yup.string().required("Register as is required"),
@@ -68,23 +68,22 @@ const Register = (props) => {
       .oneOf([yup.ref("password")], "Passwords does not match"),
   });
 
-  const registerSubmitHandler = (values,resetForm) => {
+  const registerSubmitHandler = (values, resetForm) => {
     setloading(true);
     RegisterService(values)
       .then((response) => {
         setloading(false);
-        resetForm()
+        resetForm();
         toast.success(response.message, {
           position: "top-center",
         });
-        setTimeout(()=>{
+        setTimeout(() => {
           props.closeModal();
           router.push({
-            pathname: '/',
+            pathname: "/",
             query: { user_registered: 1 },
-        })
-        },1000)
-        
+          });
+        }, 1000);
       })
       .catch((error) => {
         setloading(false);
@@ -135,7 +134,9 @@ const Register = (props) => {
         <Formik
           initialValues={initialValues}
           validationSchema={validateSchema}
-          onSubmit={(values,{resetForm }) => registerSubmitHandler(values,resetForm)}
+          onSubmit={(values, { resetForm }) =>
+            registerSubmitHandler(values, resetForm)
+          }
         >
           {({ errors, touched }) => (
             <Form>
@@ -147,7 +148,7 @@ const Register = (props) => {
                   type="text"
                   id="name"
                   name="name"
-                  placeholder="Enter name here"
+                  placeholder="Ex. Manoj Kumar"
                 />
                 {touched.name && errors.name && (
                   <div className="form-error">{errors.name}</div>
@@ -161,7 +162,7 @@ const Register = (props) => {
                   type="email"
                   id="email"
                   name="email"
-                  placeholder="Enter email here"
+                  placeholder="@example.com"
                 />
                 {touched.email && errors.email && (
                   <div className="form-error">{errors.email}</div>
@@ -175,7 +176,7 @@ const Register = (props) => {
                   type="text"
                   id="organization_name"
                   name="organization_name"
-                  placeholder="Organization Name"
+                  placeholder="Ex. Worksise Private Limited"
                 />
                 {touched.organization_name && errors.organization_name && (
                   <div className="form-error">{errors.organization_name}</div>
@@ -189,7 +190,7 @@ const Register = (props) => {
                   type="text"
                   id="mobile"
                   name="mobile"
-                  placeholder="Enter phone no here"
+                  placeholder="Ex. 9123456789"
                 />
                 {touched.mobile && errors.mobile && (
                   <div className="form-error">{errors.mobile}</div>
@@ -217,7 +218,7 @@ const Register = (props) => {
                     type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
-                    placeholder="Enter password here"
+                    placeholder="********"
                   />
                   <div
                     className="eye-icon"
@@ -241,7 +242,7 @@ const Register = (props) => {
                     type={showCPassword ? "text" : "password"}
                     id="confirm_password"
                     name="confirm_password"
-                    placeholder="Confirm password"
+                    placeholder="********"
                   />
                   <div
                     className="eye-icon"

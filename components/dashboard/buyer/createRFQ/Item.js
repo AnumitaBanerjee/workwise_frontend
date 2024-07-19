@@ -5,11 +5,17 @@ import {
   addProductSpec,
   addProductSpecValue,
   addQAP,
+  addRfqProduct,
+  removeRfqProduct,
+  setUserSelectedDefaultFile,
 } from "@/redux/slice";
 import { handleUploadFile } from "@/services/rfq";
+import { faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
   const dispatch = useDispatch();
@@ -19,17 +25,23 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
   const [quantity, setquantity] = useState("");
 
   const [comment, setComment] = useState(data?.comment);
-  const [datasheet, setDatasheet] = useState(data?.datasheet);
-  const [qap, setQAP] = useState(data?.qap);
+  const [datasheet, setDatasheet] = useState(
+    data?.datasheet != "0" ? data?.datasheet : data.defaultSelectedVAB
+  );
+  const [qap, setQAP] = useState(
+    data?.qap != "0" ? data?.qap : data.defaultSelectedVAB
+  );
 
   const [uploadedQapFile, setuploadedQapFile] = useState(data?.qap_file);
   const [uploadedSpecFile, setuploadedSpecFile] = useState(data?.spec_file);
-  const [uploadedDatasheetFile, setuploadedDatasheetFile] = useState(data?.datasheet_file);
+  const [uploadedDatasheetFile, setuploadedDatasheetFile] = useState(
+    data?.datasheet_file
+  );
 
   const [selectedVendors, setselectedVendors] = useState(data?.vendors);
 
   useEffect(() => {
-    console.log("data",data)
+    console.log("data", data);
     data.spec.map((item) => {
       if (item.title == "Size") {
         setspecSize(item.value);
@@ -43,6 +55,16 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
     });
   }, []);
 
+  const handleSelectDefaultTDSQAPFile = (e,type,data) =>{
+    
+    dispatch(setUserSelectedDefaultFile({
+      file_type: type,
+      is_selected: e.target.checked,
+      product_id: data.product_id,
+      variant:data.variant
+    }));
+  }
+
   const handleSpecValue = (type, value) => {
     if (type == "size") {
       setspecSize(value);
@@ -51,6 +73,7 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
           title: "Size",
           value: value,
           product_id: data.product_id,
+          variant:data.variant
         })
       );
     }
@@ -61,6 +84,7 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
           title: "Spec",
           value: value,
           product_id: data.product_id,
+          variant:data.variant
         })
       );
     }
@@ -71,6 +95,7 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
           title: "Quantity",
           value: value,
           product_id: data.product_id,
+          variant:data.variant
         })
       );
     }
@@ -78,8 +103,11 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
 
   const handleUpload = (event, type) => {
     if (event.target.files && event.target.files[0]) {
-      const i = event.target.files[0];
-      uploadToServer(i, type);
+      const fileExtension = event.target.files[0].name.split(".").pop();
+      if (fileExtension == "pdf") {
+        const i = event.target.files[0];
+        uploadToServer(i, type);
+      }
     }
   };
 
@@ -90,11 +118,11 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
           let uploadedFile = res.data[0].file_path;
           if (type == "qap_file") {
             setuploadedQapFile(uploadedFile);
-          } 
-          if (type == "spec_file"){
+          }
+          if (type == "spec_file") {
             setuploadedSpecFile(uploadedFile);
           }
-          if (type == "datasheet_file"){
+          if (type == "datasheet_file") {
             setuploadedDatasheetFile(uploadedFile);
           }
           dispatch(
@@ -102,11 +130,21 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
               type,
               value: uploadedFile,
               product_id: data.product_id,
+              variant:data.variant
             })
           );
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>{
+        let message = err.message.response.data.errors.file.message;
+        alert(message)
+        // toast.error(message,
+        //   {
+        //     position: "top-right",
+        //   }
+        // );
+
+      });
   };
 
   const handleAddComment = (e) => {
@@ -115,6 +153,7 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
       addComment({
         value: e.target.value,
         product_id: data.product_id,
+        variant:data.variant
       })
     );
   };
@@ -125,6 +164,7 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
       addDatasheet({
         value: e.target.value,
         product_id: data.product_id,
+        variant:data.variant
       })
     );
   };
@@ -134,8 +174,24 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
       addQAP({
         value: e.target.value,
         product_id: data.product_id,
+        variant:data.variant
       })
     );
+  };
+
+  const handleRemoveProduct = () => {
+    dispatch(removeRfqProduct(data));
+  };
+
+  const handleAddVarient = () => {    
+    const item = {
+      product_id: data.product_id,
+      product_name: data?.name,
+      vendors: data?.vendors,
+      pd_tds_file_url: data.predefined_tds_file,
+      pd_qap_file_url: data.predefined_qap_file,
+    };    
+    dispatch(addRfqProduct(item));
   };
 
   return (
@@ -180,6 +236,7 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
                 <input
                   type="file"
                   onChange={(e) => handleUpload(e, "spec_file")}
+                  accept={".pdf"}
                   multiple={false}
                 />
               </label>
@@ -190,16 +247,26 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
                 <input
                   type="file"
                   onChange={(e) => handleUpload(e, "spec_file")}
+                  accept={".pdf"}
                   multiple={false}
                 />
               </label>
             )}
           </div>
         </td>
-
-        <td>
-          <div>
-            {vendorApprovedList && (
+        <td className="w200">
+          <p>
+            <div>
+            {data.predefined_tds_file != '' ?
+              <>
+                <label>
+                  <input type="checkbox" checked={data.user_selected_predefined_tds} onClick={(e)=>handleSelectDefaultTDSQAPFile(e,'TDS',data)}/> Select file
+                </label>
+                <a href={data.predefined_tds_file} className="view-file-link" target="_blank">View File</a>
+                
+              </>: <p>No TDS file found in our system!</p>}
+            </div>
+            {/* {vendorApprovedList && (
               <select
                 name="datesheet"
                 id="datesheet"
@@ -215,53 +282,84 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
                   );
                 })}
               </select>
-            )}
-            <span>OR</span>
-            {uploadedDatasheetFile != "" && (
-              <a href={uploadedDatasheetFile} className="page-link" target="_blank">
-                View file
-              </a>
-            )}
-            {uploadedDatasheetFile != '' && 
-              <label className="upload uploadInlineFile">
-                Change
-                <input
-                  type="file"
-                  onChange={(e) => handleUpload(e, "datasheet_file")}
-                  multiple={false}
-                />
-              </label>
-            }
-            {uploadedDatasheetFile == '' && <label className="upload uploadInlineFile">
-              Upload{" "}
-              <input
-                type="file"
-                onChange={(e) => handleUpload(e, "datasheet_file")}
-                multiple={false}
-              />
-            </label>}
-          </div>
+            )} */}
+            <p className="m-4">
+              <span>OR</span>
+            </p>
+            <p>
+              {uploadedDatasheetFile != "" && (
+                <a
+                  href={uploadedDatasheetFile}
+                  className="page-link"
+                  target="_blank"
+                >
+                  View file
+                </a>
+              )}
+              {uploadedDatasheetFile != "" && (
+                <label className="upload uploadInlineFile">
+                  Change
+                  <input
+                    type="file"
+                    onChange={(e) => handleUpload(e, "datasheet_file")}
+                    multiple={false}
+                    accept={".pdf"}
+                  />
+                </label>
+              )}
+              {uploadedDatasheetFile == "" && (
+                <label className="upload uploadInlineFile">
+                  Upload own file{" "}
+                  <input
+                    type="file"
+                    onChange={(e) => handleUpload(e, "datasheet_file")}
+                    multiple={false}
+                    accept={".pdf"}
+                  />
+                </label>
+              )}
+            </p>
+          </p>
         </td>
-        <td>
-          <div>
-          {vendorApprovedList && (
-                  <select
-                    name="datesheet"
-                    id="datesheet"
-                    onChange={handleAddQap}
-                    value={qap}
+        <td className="w200">
+          <p>
+            <div>
+              {data.predefined_qap_file != '' ?
+                <>
+                  <label>
+                    <input type="checkbox" checked={data.user_selected_predefined_qap} onClick={(e)=>handleSelectDefaultTDSQAPFile(e,'QAP',data)}/> Select file
+                  </label>
+                  <a
+                    href={data.predefined_qap_file}
+                    className="view-file-link"
+                    target="_blank"
                   >
-                    <option value="0">Select</option>
-                    {vendorApprovedList.map((item) => {
-                      return (
-                        <option key={`datesheet_${item.id}`} value={item.id}>
-                          {item.vendor_approve}
-                        </option>
-                      );
-                    })}
-                  </select>
-                )}
-                <span>OR</span>
+                  View File
+                  </a>
+                </>: <p>No QAP file found in our system!</p>
+              }
+            </div>
+            {/* {vendorApprovedList && (
+              <select
+                name="datesheet"
+                id="datesheet"
+                onChange={handleAddQap}
+                value={qap}
+              >
+                <option value="0">Select</option>
+                {vendorApprovedList.map((item) => {
+                  return (
+                    <option key={`datesheet_${item.id}`} value={item.id}>
+                      {item.vendor_approve}
+                    </option>
+                  );
+                })}
+              </select>
+            )} */}
+            <p className="m-4">
+              <span>OR</span>
+            </p>
+            <p>
             {uploadedQapFile != "" && (
               <a href={uploadedQapFile} className="page-link" target="_blank">
                 View file
@@ -274,22 +372,25 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
                   type="file"
                   onChange={(e) => handleUpload(e, "qap_file")}
                   multiple={false}
+                  accept={".pdf"}
                 />
               </label>
             )}
             {uploadedQapFile == "" && (
-              <>                
+              <>
                 <label className="upload uploadInlineFile">
-                  Upload{" "}
+                  Upload own file{" "}
                   <input
                     type="file"
                     onChange={(e) => handleUpload(e, "qap_file")}
                     multiple={false}
+                    accept={".pdf"}
                   />
                 </label>
               </>
             )}
-          </div>
+            </p>
+          </p>
         </td>
         <td>
           <input
@@ -305,14 +406,23 @@ const Item = ({ data, handleProductSpec, vendorApprovedList }) => {
             <Link
               href={`rfq-management-vendor?vendors=${selectedVendors
                 .map((approved) => approved.user_id)
-                .join(",")}`}
+                .join(",")}&productid=${data.product_id}`}
               className="page-link"
             >
-              View selected vendors
+              View selected vendors ({selectedVendors.length})
             </Link>
 
             {/* <button className="upload">Select vendors</button> */}
           </span>
+        </td>
+        <td>
+          <button className="upload mr-2 mb-2" onClick={handleRemoveProduct}>
+            <FontAwesomeIcon icon={faTrash} /> Remove
+          </button>
+          {data?.variant == 0 &&
+          <button className="upload" onClick={handleAddVarient}>
+            <FontAwesomeIcon icon={faPlusCircle} /> Add variant
+          </button>}
         </td>
       </tr>
     </>

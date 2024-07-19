@@ -26,322 +26,322 @@ const RfqManagementPreview = () => {
                 <span className="title">RFQ #1234 details</span>
 
                 <div className="details-table">
-                <div className="table-responsive">
-                  <table className="table table-striped ">
-                    <thead>
-                      <tr>
-                        <th>Name of product</th>
-                        <th>Size specifications & Quantity</th>
-                        <th>
-                          Datasheet
-                          <br /> (Optional)
-                        </th>
-                        <th>
-                          QAP <br />
-                          (Optional)
-                        </th>
-                        <th>Comments (Optional)</th>
-                        <th>Selected vendors</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Carbon steel pipes</td>
-                        <td>
-                          <div className="size-specification">
-                            <input
-                              type="text"
-                              name="size"
-                              id="size"
-                              placeholder="Size"
-                              disabled
-                            />
-                            <input
-                              type="text"
-                              name="spec"
-                              id="spec"
-                              placeholder="Spec"
-                              disabled
-                            />
-                            <input
-                              type="text"
-                              name="qty"
-                              id="qty"
-                              placeholder="Quantity"
-                              disabled
-                            />
-                            <FontAwesomeIcon icon={faEye} />
-                          </div>
-                        </td>
+                  <div className="table-responsive">
+                    <table className="table table-striped ">
+                      <thead>
+                        <tr>
+                          <th>Name of product</th>
+                          <th>Size specifications & Quantity</th>
+                          <th>
+                            Datasheet
+                            <br /> (Optional)
+                          </th>
+                          <th>
+                            QAP <br />
+                            (Optional)
+                          </th>
+                          <th>Comments (Optional)</th>
+                          <th>Selected vendors</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Carbon steel pipes</td>
+                          <td>
+                            <div className="size-specification">
+                              <input
+                                type="text"
+                                name="size"
+                                id="size"
+                                placeholder="Size"
+                                disabled
+                              />
+                              <input
+                                type="text"
+                                name="spec"
+                                id="spec"
+                                placeholder="Spec"
+                                disabled
+                              />
+                              <input
+                                type="text"
+                                name="qty"
+                                id="qty"
+                                placeholder="Quantity"
+                                disabled
+                              />
+                              <FontAwesomeIcon icon={faEye} />
+                            </div>
+                          </td>
 
-                        <td>
-                          <div>
+                          <td>
+                            <div>
+                              <span>
+                                <FontAwesomeIcon icon={faEye} />
+                              </span>
+                              <span>
+                                <Image
+                                  src="/assets/images/download-icon.png"
+                                  alt="Workwise"
+                                  width={16}
+                                  height={16}
+                                  priority={true}
+                                />
+                              </span>
+                            </div>
+                          </td>
+                          <td>
+                            <div>
+                              <span>
+                                <FontAwesomeIcon icon={faEye} />
+                              </span>
+                              <span>
+                                <Image
+                                  src="/assets/images/download-icon.png"
+                                  alt="Workwise"
+                                  width={16}
+                                  height={16}
+                                  priority={true}
+                                />
+                              </span>
+                            </div>
+                          </td>
+                          <td>Lorem ipsum placeholder</td>
+                          <td>
                             <span>
-                              <FontAwesomeIcon icon={faEye} />
+                              <Link
+                                href="rfq-management-vendor"
+                                className="page-link"
+                              >
+                                View
+                              </Link>
                             </span>
-                            <span>
-                              <Image
-                                src="/assets/images/download-icon.png"
-                                alt="Workwise"
-                                width={16}
-                                height={16}
-                                priority={true}
-                              />
-                            </span>
-                          </div>
-                        </td>
-                        <td>
-                          <div>
-                            <span>
-                              <FontAwesomeIcon icon={faEye} />
-                            </span>
-                            <span>
-                              <Image
-                                src="/assets/images/download-icon.png"
-                                alt="Workwise"
-                                width={16}
-                                height={16}
-                                priority={true}
-                              />
-                            </span>
-                          </div>
-                        </td>
-                        <td>Lorem ipsum placeholder</td>
-                        <td>
-                          <span>
-                            <Link
-                              href="rfq-management-vendor"
-                              className="page-link"
-                            >
-                              View
-                            </Link>
-                          </span>
-                        </td>
-                      </tr>
+                          </td>
+                        </tr>
 
-                      <tr>
-                        <td>Carbon steel pipes</td>
-                        <td>
-                          <div className="size-specification">
-                            <input
-                              type="text"
-                              name="size"
-                              id="size"
-                              placeholder="Size"
-                              disabled
-                            />
-                            <input
-                              type="text"
-                              name="spec"
-                              id="spec"
-                              placeholder="Spec"
-                              disabled
-                            />
-                            <input
-                              type="text"
-                              name="qty"
-                              id="qty"
-                              placeholder="Quantity"
-                              disabled
-                            />
-                            <FontAwesomeIcon icon={faEye} />
-                          </div>
-                        </td>
+                        <tr>
+                          <td>Carbon steel pipes</td>
+                          <td>
+                            <div className="size-specification">
+                              <input
+                                type="text"
+                                name="size"
+                                id="size"
+                                placeholder="Size"
+                                disabled
+                              />
+                              <input
+                                type="text"
+                                name="spec"
+                                id="spec"
+                                placeholder="Spec"
+                                disabled
+                              />
+                              <input
+                                type="text"
+                                name="qty"
+                                id="qty"
+                                placeholder="Quantity"
+                                disabled
+                              />
+                              <FontAwesomeIcon icon={faEye} />
+                            </div>
+                          </td>
 
-                        <td>
-                          <div>
+                          <td>
+                            <div>
+                              <span>
+                                <FontAwesomeIcon icon={faEye} />
+                              </span>
+                              <span>
+                                <Image
+                                  src="/assets/images/download-icon.png"
+                                  alt="Workwise"
+                                  width={16}
+                                  height={16}
+                                  priority={true}
+                                />
+                              </span>
+                            </div>
+                          </td>
+                          <td>
+                            <div>
+                              <span>
+                                <FontAwesomeIcon icon={faEye} />
+                              </span>
+                              <span>
+                                <Image
+                                  src="/assets/images/download-icon.png"
+                                  alt="Workwise"
+                                  width={16}
+                                  height={16}
+                                  priority={true}
+                                />
+                              </span>
+                            </div>
+                          </td>
+                          <td>Lorem ipsum placeholder</td>
+                          <td>
                             <span>
-                              <FontAwesomeIcon icon={faEye} />
+                              <Link
+                                href="rfq-management-vendor"
+                                className="page-link"
+                              >
+                                View
+                              </Link>
                             </span>
-                            <span>
-                              <Image
-                                src="/assets/images/download-icon.png"
-                                alt="Workwise"
-                                width={16}
-                                height={16}
-                                priority={true}
-                              />
-                            </span>
-                          </div>
-                        </td>
-                        <td>
-                          <div>
-                            <span>
-                              <FontAwesomeIcon icon={faEye} />
-                            </span>
-                            <span>
-                              <Image
-                                src="/assets/images/download-icon.png"
-                                alt="Workwise"
-                                width={16}
-                                height={16}
-                                priority={true}
-                              />
-                            </span>
-                          </div>
-                        </td>
-                        <td>Lorem ipsum placeholder</td>
-                        <td>
-                          <span>
-                            <Link
-                              href="rfq-management-vendor"
-                              className="page-link"
-                            >
-                              View
-                            </Link>
-                          </span>
-                        </td>
-                      </tr>
+                          </td>
+                        </tr>
 
-                      <tr>
-                        <td>Carbon steel pipes</td>
-                        <td>
-                          <div className="size-specification">
-                            <input
-                              type="text"
-                              name="size"
-                              id="size"
-                              placeholder="Size"
-                              disabled
-                            />
-                            <input
-                              type="text"
-                              name="spec"
-                              id="spec"
-                              placeholder="Spec"
-                              disabled
-                            />
-                            <input
-                              type="text"
-                              name="qty"
-                              id="qty"
-                              placeholder="Quantity"
-                              disabled
-                            />
-                            <FontAwesomeIcon icon={faEye} />
-                          </div>
-                        </td>
+                        <tr>
+                          <td>Carbon steel pipes</td>
+                          <td>
+                            <div className="size-specification">
+                              <input
+                                type="text"
+                                name="size"
+                                id="size"
+                                placeholder="Size"
+                                disabled
+                              />
+                              <input
+                                type="text"
+                                name="spec"
+                                id="spec"
+                                placeholder="Spec"
+                                disabled
+                              />
+                              <input
+                                type="text"
+                                name="qty"
+                                id="qty"
+                                placeholder="Quantity"
+                                disabled
+                              />
+                              <FontAwesomeIcon icon={faEye} />
+                            </div>
+                          </td>
 
-                        <td>
-                          <div>
+                          <td>
+                            <div>
+                              <span>
+                                <FontAwesomeIcon icon={faEye} />
+                              </span>
+                              <span>
+                                <Image
+                                  src="/assets/images/download-icon.png"
+                                  alt="Workwise"
+                                  width={16}
+                                  height={16}
+                                  priority={true}
+                                />
+                              </span>
+                            </div>
+                          </td>
+                          <td>
+                            <div>
+                              <span>
+                                <FontAwesomeIcon icon={faEye} />
+                              </span>
+                              <span>
+                                <Image
+                                  src="/assets/images/download-icon.png"
+                                  alt="Workwise"
+                                  width={16}
+                                  height={16}
+                                  priority={true}
+                                />
+                              </span>
+                            </div>
+                          </td>
+                          <td>Lorem ipsum placeholder</td>
+                          <td>
                             <span>
-                              <FontAwesomeIcon icon={faEye} />
+                              <Link
+                                href="rfq-management-vendor"
+                                className="page-link"
+                              >
+                                View
+                              </Link>
                             </span>
-                            <span>
-                              <Image
-                                src="/assets/images/download-icon.png"
-                                alt="Workwise"
-                                width={16}
-                                height={16}
-                                priority={true}
-                              />
-                            </span>
-                          </div>
-                        </td>
-                        <td>
-                          <div>
-                            <span>
-                              <FontAwesomeIcon icon={faEye} />
-                            </span>
-                            <span>
-                              <Image
-                                src="/assets/images/download-icon.png"
-                                alt="Workwise"
-                                width={16}
-                                height={16}
-                                priority={true}
-                              />
-                            </span>
-                          </div>
-                        </td>
-                        <td>Lorem ipsum placeholder</td>
-                        <td>
-                          <span>
-                            <Link
-                              href="rfq-management-vendor"
-                              className="page-link"
-                            >
-                              View
-                            </Link>
-                          </span>
-                        </td>
-                      </tr>
+                          </td>
+                        </tr>
 
-                      <tr>
-                        <td>Carbon steel pipes</td>
-                        <td>
-                          <div className="size-specification">
-                            <input
-                              type="text"
-                              name="size"
-                              id="size"
-                              placeholder="Size"
-                              disabled
-                            />
-                            <input
-                              type="text"
-                              name="spec"
-                              id="spec"
-                              placeholder="Spec"
-                              disabled
-                            />
-                            <input
-                              type="text"
-                              name="qty"
-                              id="qty"
-                              placeholder="Quantity"
-                              disabled
-                            />
-                            <FontAwesomeIcon icon={faEye} />
-                          </div>
-                        </td>
+                        <tr>
+                          <td>Carbon steel pipes</td>
+                          <td>
+                            <div className="size-specification">
+                              <input
+                                type="text"
+                                name="size"
+                                id="size"
+                                placeholder="Size"
+                                disabled
+                              />
+                              <input
+                                type="text"
+                                name="spec"
+                                id="spec"
+                                placeholder="Spec"
+                                disabled
+                              />
+                              <input
+                                type="text"
+                                name="qty"
+                                id="qty"
+                                placeholder="Quantity"
+                                disabled
+                              />
+                              <FontAwesomeIcon icon={faEye} />
+                            </div>
+                          </td>
 
-                        <td>
-                          <div>
+                          <td>
+                            <div>
+                              <span>
+                                <FontAwesomeIcon icon={faEye} />
+                              </span>
+                              <span>
+                                <Image
+                                  src="/assets/images/download-icon.png"
+                                  alt="Workwise"
+                                  width={16}
+                                  height={16}
+                                  priority={true}
+                                />
+                              </span>
+                            </div>
+                          </td>
+                          <td>
+                            <div>
+                              <span>
+                                <FontAwesomeIcon icon={faEye} />
+                              </span>
+                              <span>
+                                <Image
+                                  src="/assets/images/download-icon.png"
+                                  alt="Workwise"
+                                  width={16}
+                                  height={16}
+                                  priority={true}
+                                />
+                              </span>
+                            </div>
+                          </td>
+                          <td>Lorem ipsum placeholder</td>
+                          <td>
                             <span>
-                              <FontAwesomeIcon icon={faEye} />
+                              <Link
+                                href="rfq-management-vendor"
+                                className="page-link"
+                              >
+                                View
+                              </Link>
                             </span>
-                            <span>
-                              <Image
-                                src="/assets/images/download-icon.png"
-                                alt="Workwise"
-                                width={16}
-                                height={16}
-                                priority={true}
-                              />
-                            </span>
-                          </div>
-                        </td>
-                        <td>
-                          <div>
-                            <span>
-                              <FontAwesomeIcon icon={faEye} />
-                            </span>
-                            <span>
-                              <Image
-                                src="/assets/images/download-icon.png"
-                                alt="Workwise"
-                                width={16}
-                                height={16}
-                                priority={true}
-                              />
-                            </span>
-                          </div>
-                        </td>
-                        <td>Lorem ipsum placeholder</td>
-                        <td>
-                          <span>
-                            <Link
-                              href="rfq-management-vendor"
-                              className="page-link"
-                            >
-                              View
-                            </Link>
-                          </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
 
                   <form>
@@ -459,14 +459,13 @@ const RfqManagementPreview = () => {
                             </li>
                           </ol>
                         </div>
-
                       </div>
-                        <button type="submit" className="btn btn-primary">
-                          Create RFQ
-                        </button>
-                        <button type="submit" className="btn btn-secondary">
-                          Create RFQ
-                        </button>
+                      <button type="submit" className="btn btn-primary">
+                        Create RFQ
+                      </button>
+                      <button type="submit" className="btn btn-secondary">
+                        Create RFQ
+                      </button>
                     </div>
                   </form>
                 </div>

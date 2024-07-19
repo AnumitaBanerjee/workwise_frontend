@@ -54,11 +54,12 @@ export default function App({ Component, pageProps }) {
 
   return (
     <>
+      <ToastContainer />
       {loading && <Loader />}
       <Providers>
         <GoogleOAuthProvider clientId="866474332918-fi599o8btdrikvi9ieq7pqksngvh2mlv.apps.googleusercontent.com">
           <Layout>
-            <ToastContainer />
+            
             <Component {...pageProps} />
           </Layout>
         </GoogleOAuthProvider>

@@ -48,6 +48,7 @@ export const categoryList = (values) => {
 };
 
 export const createRfq = (values) => {
+
   return new Promise(async (resolve, reject) => {
     try {
       let response = await axiosInstance.post(`/rfq/create`, values);

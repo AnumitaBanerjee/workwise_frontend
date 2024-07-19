@@ -7,7 +7,7 @@ import * as yup from "yup";
 import Loader from "../shared/Loader";
 import { useRouter } from "next/router";
 
-const ContactUsForm = ({ isModalForm = false, closeModal }) => {
+const ContactUsForm = ({ isModalForm = false, closeModal, fromType }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -17,9 +17,7 @@ const ContactUsForm = ({ isModalForm = false, closeModal }) => {
     email: "",
     phone: "",
     subject: "Page modal lead",
-    comment: isModalForm
-      ? ``
-      : "",
+    comment: isModalForm ? `` : "",
   };
   // Login Initial Validations
   var validateSchema = null;
@@ -45,7 +43,7 @@ const ContactUsForm = ({ isModalForm = false, closeModal }) => {
           "please enter valid contact number"
         )
         .min(10, "Min 10 digit is required")
-        .max(10, "Mobile number not more than 10 digit long")
+        .max(11, "Mobile number not more than 11 digit long")
         .required("Mobile number is required"),
       subject: yup.string().optional(),
       comment: yup.string().optional(),
@@ -72,7 +70,7 @@ const ContactUsForm = ({ isModalForm = false, closeModal }) => {
           "please enter valid mobile number"
         )
         .min(10, "Min 10 digit is required")
-        .max(10, "Mobile number not more than 10 digit long")
+        .max(11, "Mobile number not more than 11 digit long")
         .required("Mobile number is required"),
       subject: yup.string().required("Subject is required"),
       comment: yup.string().required("Comment is required"),
@@ -81,7 +79,11 @@ const ContactUsForm = ({ isModalForm = false, closeModal }) => {
 
   const contactUsSubmitHandler = (values, resetForm) => {
     setLoading(true);
-    contactUsFormService(values)
+    const payload = {
+      ...values,
+      submitted_from: fromType,
+    };
+    contactUsFormService(payload)
       .then((response) => {
         setLoading(false);
         toast.success(response.message, {
@@ -124,6 +126,7 @@ const ContactUsForm = ({ isModalForm = false, closeModal }) => {
           <Form>
             <div className="row">
               <div className="col-md-6">
+                <span className="contacts-title">Name</span>
                 <div className="form-group">
                   <Field
                     type="text"
@@ -136,28 +139,32 @@ const ContactUsForm = ({ isModalForm = false, closeModal }) => {
                   )}
                 </div>
               </div>
-              {isModalForm &&  <div className="col-md-6">
-                <div className="form-group">
-                  <Field
-                    type="text"
-                    id="phone"
-                    name="phone"
-                    placeholder={
-                      isModalForm ? "Contact Number" : "Enter phone here"
-                    }
-                  />
-                  {touched.phone && errors.phone && (
-                    <div className="form-error">{errors.phone}</div>
-                  )}
+              {isModalForm && (
+                <div className="col-md-6">
+                  <span className="contacts-title">Contact Number</span>
+                  <div className="form-group">
+                    <Field
+                      type="text"
+                      id="phone"
+                      name="phone"
+                      placeholder={
+                        isModalForm ? "Ex. 9123456789" : "Enter phone here"
+                      }
+                    />
+                    {touched.phone && errors.phone && (
+                      <div className="form-error">{errors.phone}</div>
+                    )}
+                  </div>
                 </div>
-              </div>}
+              )}
               <div className={isModalForm ? "col-md-12" : "col-md-6"}>
+                <span className="contacts-title">Email</span>
                 <div className="form-group">
                   <Field
                     type="email"
                     id="email"
                     name="email"
-                    placeholder="Enter email here"
+                    placeholder="@example.com"
                   />
                   {touched.email && errors.email && (
                     <div className="form-error">{errors.email}</div>
@@ -165,21 +172,23 @@ const ContactUsForm = ({ isModalForm = false, closeModal }) => {
                 </div>
               </div>
 
-              {!isModalForm &&<div className={isModalForm ? "col-md-12" : "col-md-6"}>
-                <div className="form-group">
-                  <Field
-                    type="text"
-                    id="phone"
-                    name="phone"
-                    placeholder={
-                      isModalForm ? "Contact Number" : "Enter phone here"
-                    }
-                  />
-                  {touched.phone && errors.phone && (
-                    <div className="form-error">{errors.phone}</div>
-                  )}
+              {!isModalForm && (
+                <div className={isModalForm ? "col-md-12" : "col-md-6"}>
+                  <div className="form-group">
+                    <Field
+                      type="text"
+                      id="phone"
+                      name="phone"
+                      placeholder={
+                        isModalForm ? "Contact Number" : "Enter phone here"
+                      }
+                    />
+                    {touched.phone && errors.phone && (
+                      <div className="form-error">{errors.phone}</div>
+                    )}
+                  </div>
                 </div>
-              </div>}
+              )}
 
               {!isModalForm && (
                 <div className="col-md-6">

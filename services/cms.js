@@ -98,3 +98,37 @@ export const getProducts = (type) => {
 		}
 	});
 };
+
+export const getStates = () => {  
+	return new Promise(async (resolve, reject) => {
+		try {
+			let response = await axiosInstance.get(`/general/states`);
+			resolve(response);
+		} catch (error) {
+			reject({ message: error });
+		}
+	});
+};
+
+export const getCities = (id) => {  
+	return new Promise(async (resolve, reject) => {
+		try {
+			let response = await axiosInstance.get(`/general/cities/${id}`);
+			resolve(response);
+		} catch (error) {
+			reject({ message: error });
+		}
+	});
+};
+
+
+export const getVendorDashboardData = () => {  
+	return new Promise(async (resolve, reject) => {
+		try {
+			let response = await axiosInstance.get(`/vendor-dashboard-data`);
+			resolve(response);
+		} catch (error) {
+			reject({ message: error });
+		}
+	});
+};
