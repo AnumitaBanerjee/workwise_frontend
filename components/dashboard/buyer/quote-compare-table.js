@@ -54,7 +54,9 @@ const QuoteCompareTable = ({
                     )}
                     <div className="table-si-row table-dark-row">
                       <span>
-                        {item?.quote_details?.vendor_details?.organization_name}
+                        {item?.quote_details?.vendor_details
+                          ?.organization_name ||
+                          item?.quote_details?.vendor_details?.name}
                       </span>
                       <Dropdown className="dots-nav-anchor">
                         <Dropdown.Toggle className="dots-nav">
@@ -131,10 +133,9 @@ const QuoteCompareTable = ({
             <div className="quote-sec-bottom-con">
               <span>
                 <b>Lowest Bid</b> :{" "}
-                {
-                  getLowestQuote()[0]?.quote_details?.vendor_details
-                    ?.organization_name
-                }
+                {getLowestQuote()[0]?.quote_details?.vendor_details
+                  ?.organization_name ||
+                  getLowestQuote()[0]?.quote_details?.vendor_details?.name}
               </span>
               <span>
                 <Link
@@ -175,10 +176,9 @@ const QuoteCompareTable = ({
           <div className="quote-sec-bottom-con">
             <span>
               <b>Finalized vendor</b> :{" "}
-              {
-                alreadyFinalized[0].finalization?.winning_vendor
-                  ?.organization_name
-              }
+              {alreadyFinalized[0].finalization?.winning_vendor
+                ?.organization_name ||
+                alreadyFinalized[0].finalization?.winning_vendor?.name}
             </span>
             <span>
               <Link

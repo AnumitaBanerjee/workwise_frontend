@@ -377,7 +377,7 @@ export default function Homepage() {
       )}
 
       {/* --------- Why Choose Us / Process Overview --------- */}
-      {showHomeLists1.map((item) => {
+      {showHomeLists1?.map((item) => {
         if (initialSections.includes(item.section_name)) {
           return <DynamicSection content={item.content} key={item.id} />;
         }
@@ -389,7 +389,7 @@ export default function Homepage() {
           <div className="container">
             <div className="home-sec-3-btm">
               <Slider {...customerslider}>
-                {testimonials.map((item) => {
+                {testimonials?.map((item) => {
                   return (
                     <div
                       className="customer-slide"
@@ -526,7 +526,7 @@ export default function Homepage() {
       {/* Testimonials end*/}
 
       {/* expert-consulting */}
-      {showHomeLists1.map((item) => {
+      {showHomeLists1?.map((item) => {
         if (item.section_name == "homepage-section-5") {
           return <DynamicSection content={item.content} key={item.id} />;
         }
@@ -536,7 +536,7 @@ export default function Homepage() {
       {products && products.length > 0 && (
         <section className="home-sec-4 sc-pt-80 sc-pb-80" id="products">
           <div className="container">
-            {showHomeLists1.map((item) => {
+            {showHomeLists1?.map((item) => {
               if (item.section_name == "homepage-section-products") {
                 return <DynamicSection content={item.content} key={item.id} />;
               }
@@ -544,7 +544,7 @@ export default function Homepage() {
 
             <div className="home-sec-products">
               <Slider {...productsSlider}>
-                {products.map((item) => {
+                {products?.map((item) => {
                   return (
                     <div className="producs-slider-area" key={item?.name}>
                       {/* <Link href={`product/${item?.slug}`}> */}
@@ -553,17 +553,21 @@ export default function Homepage() {
                       >
                         <figure>
                           {" "}
-                          <Image
-                            src={
-                              item?.image_url == "" || item?.image_url == null
-                                ? "/assets/images/products-1.jpg"
-                                : item?.image_url
-                            }
-                            alt={item?.name}
-                            width={350}
-                            height={440}
-                            priority={true}
-                          />
+                          {item?.image_url == "" ||
+                            (item?.image_url == null && (
+                              <Image
+                                src={
+                                  item?.image_url == "" ||
+                                  item?.image_url == null
+                                    ? "/assets/images/products-1.jpg"
+                                    : item?.image_url
+                                }
+                                alt={item?.name}
+                                width={350}
+                                height={440}
+                                priority={true}
+                              />
+                            ))}
                         </figure>
                         <div className="producs-bottom-area">
                           <div className="producs-bottom-con">
@@ -586,7 +590,7 @@ export default function Homepage() {
       {video && (
         <section className="home-sec-5 sc-pt-80 media-sec-home">
           <div className="container">
-            {showHomeLists1.map((item) => {
+            {showHomeLists1?.map((item) => {
               if (item.section_name == "homepage-media-section") {
                 return <DynamicSection content={item.content} key={item.id} />;
               }
@@ -672,7 +676,7 @@ export default function Homepage() {
                 </div>
               </Modal>
               <figure className="image-area">
-                {video?.thumbnail_url.includes("http://") ? (
+                {video?.thumbnail_url.includes("https://") ? (
                   <Image
                     src={video?.thumbnail_url}
                     alt="Play"
@@ -700,7 +704,7 @@ export default function Homepage() {
       {companies && (
         <section className="home-sec-6 sc-pt-80 sc-pb-80">
           <div className="container">
-            {showHomeLists1.map((item) => {
+            {showHomeLists1?.map((item) => {
               if (item.section_name == "homepage-company-section") {
                 return <DynamicSection content={item.content} key={item.id} />;
               }
@@ -708,7 +712,7 @@ export default function Homepage() {
             <div className="home-sec-companies">
               <Slider {...companiesSlider}>
                 {companies &&
-                  companies.map((item) => {
+                  companies?.map((item) => {
                     return (
                       <div
                         className="companies-slider-area"
@@ -740,7 +744,7 @@ export default function Homepage() {
       {blogs && (
         <section className="home-sec-7 sc-pt-80 faq-sec">
           <div className="container">
-            {showHomeLists1.map((item) => {
+            {showHomeLists1?.map((item) => {
               if (item.section_name == "homepage-blog-section") {
                 return <DynamicSection content={item.content} key={item.id} />;
               }
@@ -754,7 +758,7 @@ export default function Homepage() {
           <div className="container">
             <div className="home-sec-resource">
               <Slider {...resourceSlider}>
-                {blogs.map((item) => {
+                {blogs?.map((item) => {
                   return (
                     <div
                       className="resource-slider-area"
@@ -793,7 +797,7 @@ export default function Homepage() {
       {faqs && (
         <section className="home-sec-8">
           <div className="container sc-pt-80 ">
-            {showHomeLists1.map((item) => {
+            {showHomeLists1?.map((item) => {
               if (item.section_name == "homepage-faq-section") {
                 return <DynamicSection content={item.content} key={item.id} />;
               }
@@ -810,7 +814,7 @@ export default function Homepage() {
                   <div className="accordion-container">
                     {faqs && faqs.length > 0 && (
                       <Accordion>
-                        {faqs.slice(0, middleIndex).map((item, index) => {
+                        {faqs.slice(0, middleIndex)?.map((item, index) => {
                           return (
                             <Accordion.Item
                               eventKey={item.id}
@@ -833,7 +837,7 @@ export default function Homepage() {
                   <div className="accordion-container">
                     {faqs && faqs.length > 0 && (
                       <Accordion>
-                        {faqs.slice(middleIndex).map((item, index) => {
+                        {faqs.slice(middleIndex)?.map((item, index) => {
                           return (
                             <Accordion.Item eventKey={item.id} key={item.id}>
                               <Accordion.Header>
@@ -856,7 +860,7 @@ export default function Homepage() {
       )}
 
       {/* OTHER SECTIONS */}
-      {showHomeLists1.map((item) => {
+      {showHomeLists1?.map((item) => {
         if (!predefinedPageSections.includes(item.section_name)) {
           return (
             <div className="container sc-pb-80">

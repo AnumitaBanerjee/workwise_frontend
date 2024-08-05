@@ -198,7 +198,7 @@ const OverallComparison = ({ rfq_id }) => {
                           className="all_vendors"
                           scope="col"
                         >
-                          {item.organization_name}
+                          {item.organization_name || item.name}
                         </th>
                       );
                     })}

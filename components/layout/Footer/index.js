@@ -171,9 +171,10 @@ const Footer = ({ cmsdata, showModal = false, setshowModal, fromType }) => {
             <p>
               © Copyrights 2024, workwise | All rights reserved | Digital
               Partner{" "}
-              <Link href="https://www.indusnet.co.in/" target="_blank">
+              {/* <Link href="https://www.indusnet.co.in/" target="_blank">
                 Indus Net Technologies
-              </Link>
+              </Link> */}
+              <Link href="#">Perfect Marketings Pvt Ltd</Link>
             </p>
             <ul>
               <li>

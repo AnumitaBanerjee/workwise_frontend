@@ -21,7 +21,7 @@ const ProductManagement = () => {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [vendorApproveList, setVendorApproveList] = useState([]);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(null);
   const [selectedVendor, setSelectedVendor] = useState("");
@@ -80,8 +80,9 @@ const ProductManagement = () => {
     vendorProductList(limit, page, search, selectedVendor)
       .then((res) => {
         setLoading(false);
-        setTotalPages(Math.ceil(res.total_count / limit));
-        res.data.map((item) => (item.isChecked = false));
+        console.log("res================> ", res);
+        setTotalPages(Math.ceil(Number(res.total_count) / limit));
+        res?.data?.map((item) => (item.isChecked = false));
         setProducts(res.data);
       })
       .catch((err) => {
@@ -102,7 +103,7 @@ const ProductManagement = () => {
 
   const getVendorApproveLists = () => {
     getVendorApproveList().then((res) => {
-      let result = res.data.map((item) => ({
+      let result = res?.data?.map((item) => ({
         value: item.id,
         label: item.vendor_approve,
       }));
@@ -113,7 +114,7 @@ const ProductManagement = () => {
   const getSubCats = (item) => {
     let cats = "";
     if (item.product_categories.length > 1) {
-      item.product_categories.map((cat, index) => {
+      item.product_categories?.map((cat, index) => {
         if (index > 0) {
           cats = (
             <>
@@ -129,7 +130,7 @@ const ProductManagement = () => {
   const selectProduct = (e, citem) => {
     let pp = [];
     //item.isChecked = e.target.checked;
-    pp = products.map((item) => {
+    pp = products?.map((item) => {
       if (item.id === citem.id) {
         item.isChecked = e.target.checked;
       }
@@ -140,12 +141,12 @@ const ProductManagement = () => {
   const selectAllProduct = (e, item) => {
     let pp = [];
     if (e.target.checked) {
-      pp = products.map((item) => {
+      pp = products?.map((item) => {
         item.isChecked = true;
         return item;
       });
     } else {
-      pp = products.map((item) => {
+      pp = products?.map((item) => {
         item.isChecked = false;
         return item;
       });
@@ -386,7 +387,7 @@ const ProductManagement = () => {
                       </thead>
                       <tbody>
                         {products &&
-                          products.map((item) => {
+                          products?.map((item) => {
                             return (
                               <>
                                 <tr key={item.id}>
@@ -465,8 +466,21 @@ const ProductManagement = () => {
                     )}
 
                     <span>Page</span>
-                    <input type="number" value={page} />
-                    <span> of {Math.ceil(totalPages / limit)}</span>
+                    <input
+                      type="number"
+                      value={page}
+                      onChange={(e) => {
+                        if (
+                          e.target.value <= totalPages &&
+                          e.target.value > 0
+                        ) {
+                          setPage(e.target.value);
+                        }
+                      }}
+                      max={page <= totalPages}
+                    />
+                    <span> of {Math.ceil(totalPages)}</span>
+                    {console.log("totalPages", totalPages)}
                   </div>
                 </div>
               </div>

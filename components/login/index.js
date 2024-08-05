@@ -41,7 +41,7 @@ const Login = (props) => {
   const { code } = router.query;
   const LINKEDIN_CLIENT_SECRET = "Nj013dgpw51YIi1Z";
   const LINKEDIN_CLIENT_ID = "77xquc68cjr3s6";
-  const LINKEDIN_CALLBACK_URL = "http://localhost:8111";
+  const LINKEDIN_CALLBACK_URL = "https://letsworkwise.com/";
   const linkedinOAuthURL = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     LINKEDIN_CALLBACK_URL
   )}&scope=profile`;
