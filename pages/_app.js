@@ -20,7 +20,7 @@ import Loader from "@/components/shared/Loader";
 import { ToastContainer } from "react-toastify";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Providers } from "@/redux/provider";
-
+import Head from "next/head";
 
 // Tell Font Awesome to skip adding the CSS automatically
 // since it's already imported above
@@ -29,7 +29,6 @@ config.autoAddCss = false;
 export default function App({ Component, pageProps }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
- 
 
   useEffect(() => {
     const handleStart = () => setLoading(true);
@@ -50,16 +49,19 @@ export default function App({ Component, pageProps }) {
     };
   }, [router]);
 
- 
-
+  const canonicalUrl = `${
+    process.env.NEXT_PUBLIC_SHARE_URL || "https://letsworkwise.com"
+  }${router.asPath}`;
   return (
     <>
       <ToastContainer />
       {loading && <Loader />}
       <Providers>
         <GoogleOAuthProvider clientId="866474332918-fi599o8btdrikvi9ieq7pqksngvh2mlv.apps.googleusercontent.com">
+          <Head>
+            <link rel="canonical" href={canonicalUrl} />
+          </Head>
           <Layout>
-            
             <Component {...pageProps} />
           </Layout>
         </GoogleOAuthProvider>
